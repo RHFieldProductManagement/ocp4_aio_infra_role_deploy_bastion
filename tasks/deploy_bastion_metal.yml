@@ -293,6 +293,7 @@
     conn_name: baremetal
     ip4: 192.168.123.100/24
     gw4: 192.168.123.1
+    mtu: 9000
     state: present
   when: ocp4_aio_deploy_type == "ipi"
 
@@ -303,6 +304,7 @@
     ifname: eth0
     hairpin: false
     master: baremetal
+    mtu: 9000
     state: present
   when: ocp4_aio_deploy_type == "ipi"
 
