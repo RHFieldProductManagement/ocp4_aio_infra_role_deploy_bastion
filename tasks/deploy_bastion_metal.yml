@@ -308,6 +308,12 @@
     state: present
   when: ocp4_aio_deploy_type == "ipi"
 
+- name: Change mtu for eth0/baremetal interfaces
+  command: "{{ item }}"
+  loop:
+    - nmcli connection modify eth0 802-3-ethernet.mtu 9000
+    - nmcli connection modify baremetal 802-3-ethernet.mtu 9000
+
 - name: Ensure that provisioning bridge is never default-gw
   ansible.builtin.command: nmcli con modify provisioning ipv4.never-default yes
   when: ocp4_aio_deploy_type == "ipi"
