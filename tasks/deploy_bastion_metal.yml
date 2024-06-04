@@ -36,6 +36,7 @@
     - jq
     - git
     - httpd
+    - squid
     - dhcp-server
     - net-tools
     - nano
