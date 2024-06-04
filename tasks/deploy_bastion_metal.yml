@@ -1,4 +1,3 @@
-
 - name: Wait for Bastion machine to start
   wait_for_connection:
     timeout: 120
@@ -8,7 +7,7 @@
   delay: 30
 
 - name: Grow root disk
-  ansible.builtin.command: growpart /dev/vda 1
+  ansible.builtin.command: growpart /dev/vda 4
   ignore_errors: true
 
 - name: Resize partition to fill disk
@@ -18,11 +17,12 @@
   ansible.builtin.hostname:
     name: ocp4-bastion.aio.example.com
 
-- name: Update Repos to working mirrors...
-  ansible.builtin.command:
-    chdir: /etc/yum.repos.d
-    cmd: |
-      sed -i -e 's/mirror\./vault./' -e 's/^mirrorlist/#mirrorlist/' -e 's/^#baseurl/baseurl/' *.repo
+- name: Install EPEL Repo
+  ansible.builtin.dnf:
+    name: https://dl.fedoraproject.org/pub/epel/epel-release-latest-9.noarch.rpm
+    state: present
+    disable_gpg_check: true
+  become: true
 
 - name: Ensure the crb repository is enabled
   community.general.dnf_config_manager:
@@ -30,36 +30,34 @@
     state: enabled
 
 - name: Install required base packages
-  dnf:
+  ansible.builtin.dnf:
     name:
-      - qemu-img
-      - jq
-      - git
-      - httpd
-      - squid
-      - dhcp-server
-      - xinetd
-      - net-tools
-      - nano
-      - bind
-      - bind-utils
-      - haproxy
-      - wget
-      - syslinux
-      - libvirt-libs
-      - tftp-server
-      - syslinux-tftpboot
-      - firewalld
-      - python3-virtualenv
-      - podman
+    - qemu-img
+    - jq
+    - git
+    - httpd
+    - dhcp-server
+    - net-tools
+    - nano
+    - bind
+    - bind-utils
+    - haproxy
+    - wget
+    - syslinux
+    - libvirt-libs
+    - tftp-server
+    - syslinux-tftpboot
+    - firewalld
+    - podman
+    - python3-virtualenv
     state: latest
-    skip_broken: yes
+    skip_broken: true
 
 - name: Upgrade all packages
   dnf:
     name: "*"
     state: latest
-    skip_broken: yes
+    skip_broken: true
 
 - name: Create SSH keypair
   openssh_keypair:
