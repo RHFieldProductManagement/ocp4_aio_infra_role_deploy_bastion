@@ -51,6 +51,8 @@
     - firewalld
     - podman
     - python3-virtualenv
+    - libffi-devel
+    - gcc
     state: latest
     skip_broken: true
 
